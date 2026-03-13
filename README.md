@@ -259,6 +259,6 @@ Commercial resale or private profit usage is prohibited without permission.
 Built in **Ghana 🇬🇭**
 For **Alkebulan (Africa)**
 
-By **KS1 Empire Group & Foundation**
+By **KS1 Empire Group & Foundation** #KS1EGF
 
 > “Technology should serve people — not the other way around.”
