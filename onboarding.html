@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register Your Business – KS1 ALKEBULAN PAY</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; background: #f5f7fa; }
+    .form { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h1 { color: #001A3D; text-align: center; margin-bottom: 20px; }
+    input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; }
+    button { background: #D4AF37; color: #001A3D; padding: 14px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+    button:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div class="form">
+    <h1>Register Your Business</h1>
+    <input type="text" id="fullName" placeholder="Full Name" required />
+    <input type="tel" id="phone" placeholder="Phone Number (e.g. +233240000000)" required />
+    <input type="email" id="email" placeholder="Email (Optional)" />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="createAccount()">Create Account</button>
+  </div>
+
+  <script>
+    const API_BASE = 'https://ks1-sme-onboarding-system.onrender.com/api/onboarding';
+
+    async function createAccount() {
+      const data = {
+        fullName: document.getElementById('fullName').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value || undefined,
+        password: document.getElementById('password').value
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/create-account`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.success) {
+          alert('✅ Account created! Next: Verify your phone.');
+          // Redirect to next step (you can build Step 2 later)
+          window.location.href = 'https://ks1-alkebulan-pay.pages.dev';
+        } else {
+          alert('❌ ' + result.message);
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+      }
+    }
+  </script>
+</body>
+</html>
