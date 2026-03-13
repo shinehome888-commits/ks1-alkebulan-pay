@@ -45,6 +45,7 @@
       font-weight: 700;
       font-size: 64px;
       letter-spacing: -1px;
+      word-spacing: 2px;
       background: linear-gradient(to right, #fff, var(--gold));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -126,12 +127,12 @@
       margin-top: 50px;
     }
     @media (max-width: 768px) {
-      .logo { font-size: 48px; }
+      .logo { font-size: 48px; word-spacing: 3px; }
       .hero { padding: 30px; }
       .btn { display: block; width: 90%; margin: 14px auto; }
     }
     @media (max-width: 480px) {
-      .logo { font-size: 36px; }
+      .logo { font-size: 36px; word-spacing: 4px; }
       header { padding: 60px 0 40px; }
     }
   </style>
@@ -139,15 +140,14 @@
 <body>
   <div class="container">
     <header>
-      <h1 class="logo">KS1<span style="color:#D4AF37">ALKEBULAN</span>PAY</h1>
+      <h1 class="logo">KS1 ALKEBULAN PAY</h1>
       <p class="subtitle">A nonprofit digital trade infrastructure built in Ghana, for Alkebulan (Africa) — empowering SMEs through ethical, transparent technology.</p>
     </header>
 
     <div class="hero">
-      <h2>Begin Your Digital Trade Journey</h2>
-      <p>Secure identity. Trusted transactions. Community-powered support.</p>
-      <a href="https://ks1-alkebulan-pay-identity-hub.pages.dev" class="btn">Create Account</a>
-      <a href="https://ks1-alkebulan-pay-admin.pages.dev" class="btn">Admin Login</a>
+      <h2>Register Your Business in Under 3 Minutes</h2>
+      <p>Join Ghana’s digital trade ecosystem for SMEs. Secure, fast, and free.</p>
+      <a href="https://ks1-sme-onboarding.onrender.com" class="btn">Register Your Business</a>
     </div>
 
     <div class="features">
@@ -174,5 +174,12 @@
       <p>Built in Ghana • For Alkebulan (Africa) • One Love. One Mission.</p>
     </footer>
   </div>
+
+  <!-- Admin redirect -->
+  <script>
+    if (window.location.pathname === '/admin') {
+      window.location.href = 'https://ks1-alkebulan-pay-admin.pages.dev';
+    }
+  </script>
 </body>
 </html>
