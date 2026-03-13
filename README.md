@@ -1,101 +1,265 @@
-# 🌍 KS1 ALKEBULAN PAY
+ 🌍 KS1 ALKEBULAN PAY
 
-> **A nonprofit digital trade infrastructure for Ghanaian SMEs**  
+> **A nonprofit digital trade infrastructure for Ghanaian SMEs**
 > Built by **KS1 Empire Group & Foundation (KS1EGF)** • © 2026
 
-[![License](https://img.shields.io/badge/License-Nonprofit--Use-002147?style=flat&color=D4AF37)](https://github.com/shinehome888-commits/ks1-alkebulan-pay)
+[![License](https://img.shields.io/badge/License-Nonprofit--Use-002147?style=flat\&color=D4AF37)](https://github.com/shinehome888-commits/ks1-alkebulan-pay)
 [![Status](https://img.shields.io/badge/Status-Live-%234CAF50)](https://ks1-alkebulan-pay.pages.dev)
 
-KS1 ALKEBULAN PAY is a secure, transparent, and community-powered platform that empowers Ghanaian entrepreneurs, traders, and small businesses with:
-- Digital identity (Trade ID)
-- Escrow-protected transactions
-- Reputation-based eligibility for donor-funded support
-- Zero financial risk — we coordinate, not custody
+**KS1 ALKEBULAN PAY** is a **nonprofit digital trade infrastructure** designed to empower Ghanaian SMEs with identity, trust, secure transactions, and access to opportunity.
 
-No banks. No loans. No profit.  
-Just **ethical tech for economic dignity**.
+The platform removes barriers in commerce by combining:
 
----
+* Digital business identity
+* Escrow-protected trade
+* Reputation scoring
+* SME onboarding infrastructure
+* Eligibility-based donor support
 
-## 🚀 Live Links
+This system ensures **trust, transparency, and economic dignity** for small businesses.
 
-| Service | URL |
-|--------|-----|
-| **Main Website** | [https://ks1-alkebulan-pay.pages.dev](https://ks1-alkebulan-pay.pages.dev) |
-| **Identity Hub (Register/Login)** | [https://ks1-alkebulan-pay-identity-hub.pages.dev](https://ks1-alkebulan-pay-identity-hub.pages.dev) |
-| **Trade Coordination** | [https://ks1-alkebulan-pay-trade-coordination.pages.dev](https://ks1-alkebulan-pay-trade-coordination.pages.dev) |
-| **Secure Transaction (Escrow)** | [https://ks1-alkebulan-pay-secure-transaction.pages.dev](https://ks1-alkebulan-pay-secure-transaction.pages.dev) |
-| **Trade Support (Eligibility)** | [https://ks1-alkebulan-pay-trade-support.pages.dev](https://ks1-alkebulan-pay-trade-support.pages.dev) |
-| **Admin Dashboard** | [https://ks1-alkebulan-pay-admin.pages.dev](https://ks1-alkebulan-pay-admin.pages.dev) |
-| **Backend API** | [https://ks1-alkebulan-pay-backend.onrender.com](https://ks1-alkebulan-pay-backend.onrender.com) |
+No banks.
+No interest.
+No lending.
+
+Just **ethical technology for African trade.**
 
 ---
 
-## 🧩 Core Features
+# 🚀 Live Links
 
-✅ **Digital Trade Identity**  
-- Unique `KS1-XXXX` Trade ID for every business  
-- Dual onboarding: phone or crypto wallet  
-
-✅ **Reputation Engine**  
-- Scores based on transaction history, disputes, and volume  
-- Transparent, fair, and tamper-proof  
-
-✅ **Eligibility Assessment**  
-- Automatically evaluates SMEs for donor-funded support  
-- Criteria: reputation ≥70, volume ≥GHS 1,000, disputes <5  
-
-✅ **Escrow Protection**  
-- Funds held via licensed Ghanaian payment providers (e.g., Hubtel, MTN MoMo)  
-- KS1 only verifies delivery — never touches money  
-
-✅ **Admin Oversight**  
-- Real-time dashboard for KS1EGF administrators  
-- View all businesses, contact info, status, and eligibility  
-
-✅ **Nonprofit Compliance**  
-- No lending, no interest, no fees  
-- Operates under **KS1 Empire Group & Foundation (KS1EGF)**  
+| Service                          | URL                                                                                                              |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Main Website**                 | [https://ks1-alkebulan-pay.pages.dev](https://ks1-alkebulan-pay.pages.dev)                                       |
+| **Identity Hub**                 | [https://ks1-alkebulan-pay-identity-hub.pages.dev](https://ks1-alkebulan-pay-identity-hub.pages.dev)             |
+| **SME Onboarding**               | [https://ks1-alkebulan-pay-sme-onboarding.pages.dev](https://ks1-alkebulan-pay-sme-onboarding.pages.dev)         |
+| **Trade Coordination**           | [https://ks1-alkebulan-pay-trade-coordination.pages.dev](https://ks1-alkebulan-pay-trade-coordination.pages.dev) |
+| **Secure Transactions (Escrow)** | [https://ks1-alkebulan-pay-secure-transaction.pages.dev](https://ks1-alkebulan-pay-secure-transaction.pages.dev) |
+| **Trade Support Eligibility**    | [https://ks1-alkebulan-pay-trade-support.pages.dev](https://ks1-alkebulan-pay-trade-support.pages.dev)           |
+| **Admin Dashboard**              | [https://ks1-alkebulan-pay-admin.pages.dev](https://ks1-alkebulan-pay-admin.pages.dev)                           |
+| **Backend API**                  | [https://ks1-alkebulan-pay-backend.onrender.com](https://ks1-alkebulan-pay-backend.onrender.com)                 |
 
 ---
 
-## 🛠️ Tech Stack
+# 🧩 Core Ecosystem Modules
 
-- **Frontend**: HTML5, CSS3, JavaScript (vanilla)  
-- **Backend**: Node.js + Express  
-- **Database**: MongoDB Atlas (cloud)  
-- **Auth**: JWT + bcrypt  
-- **Hosting**:  
-  - Frontends → Cloudflare Pages  
-  - Backend → Render  
-- **Design**: Deep blue (#002147) + Gold (#D4AF37) branding  
+The platform is built as **modular microservices**.
 
----
+## 1️⃣ SME Onboarding System
 
-## 🔐 Security & Ethics
+New businesses enter the ecosystem through a guided onboarding flow.
 
-- **No user funds are ever held** by KS1 ALKEBULAN PAY  
-- All transactions settled through **licensed Ghanaian PSPs**  
-- Passwords hashed with **bcrypt**  
-- Admin access strictly controlled (`isAdmin: true`)  
-- Session auto-logout after **45 seconds of inactivity**  
+Features:
+
+* Business registration
+* Owner identity submission
+* Document uploads
+* Initial SME profile creation
+
+Outputs SME record → sent to **Verification & KYC System**.
 
 ---
 
-## 📜 License
+## 2️⃣ Verification & KYC System
 
-This project is a **nonprofit initiative** by **KS1 Empire Group & Foundation (KS1EGF)**.  
+Verifies the legitimacy of SMEs and prevents fraud.
 
-© 2026 KS1 ALKEBULAN PAY – A nonprofit project by KS1 Empire Group & Foundation (KS1EGF)
+Checks include:
 
-> **Not for commercial resale or private profit.**  
-> For use in supporting Ghanaian SMEs and ethical digital trade.
+* Identity validation
+* Business document verification
+* Duplicate detection
+* Risk assessment
+
+Approved SMEs receive a **Trade ID**.
 
 ---
 
-## ❤️ One Love. One Mission.
+## 3️⃣ Trade Identity Infrastructure
 
-Built with care in Ghana, for Alkebulan (Africa).  
-By **Shine Jones** • Founder, KS1EGF
+Every approved SME receives a permanent:
+
+**KS1 Trade ID**
+
+Example:
+
+```
+KS1-2048
+```
+
+This identity powers:
+
+* transactions
+* reputation
+* eligibility scoring
+
+---
+
+## 4️⃣ Secure Escrow Transactions
+
+Trade is protected using escrow coordination.
+
+Features:
+
+* Buyer and seller agreement
+* Escrow protection
+* Delivery verification
+* Dispute escalation
+
+Funds are handled only by **licensed Ghanaian payment providers**.
+
+Examples:
+
+* MTN MoMo
+* Hubtel
+
+KS1 never touches user funds.
+
+---
+
+## 5️⃣ Reputation & Trust Engine
+
+Each SME builds a reputation score based on:
+
+* completed transactions
+* dispute history
+* trade volume
+* reliability
+
+Scores determine ecosystem privileges.
+
+---
+
+## 6️⃣ Eligibility Assessment
+
+SMEs may qualify for **donor-funded support programs**.
+
+Example criteria:
+
+| Metric       | Requirement |
+| ------------ | ----------- |
+| Reputation   | ≥ 70        |
+| Trade Volume | ≥ GHS 1,000 |
+| Disputes     | < 5         |
+
+Eligible SMEs may receive:
+
+* grants
+* inventory support
+* ecosystem promotion
+
+---
+
+# ⚙️ System Architecture
+
+The system follows a **microservice architecture**.
+
+```
+SME User
+   │
+   ▼
+SME Onboarding System
+   │
+   ▼
+Verification & KYC System
+   │
+   ▼
+Trade ID Service
+   │
+   ▼
+Trade Coordination
+   │
+   ▼
+Escrow Pay
+   │
+   ▼
+Reputation Engine
+   │
+   ▼
+Eligibility Engine
+   │
+   ▼
+Admin Command Center
+```
+
+Each service communicates through **secure APIs**.
+
+---
+
+# 🛠️ Tech Stack
+
+Frontend
+
+* HTML5
+* CSS3
+* Vanilla JavaScript
+
+Backend
+
+* Node.js
+* Express
+
+Database
+
+* MongoDB Atlas
+
+Authentication
+
+* JWT
+* bcrypt
+
+Hosting
+
+Frontend → Cloudflare Pages
+Backend → Render
+
+Design System
+
+Deep Blue: `#002147`
+Gold: `#D4AF37`
+
+---
+
+# 🔐 Security & Ethics
+
+KS1 ALKEBULAN PAY follows strict ethical infrastructure principles.
+
+✔ No custody of user funds
+✔ No lending or financial speculation
+✔ Transparent reputation scoring
+✔ Identity verification required
+✔ All transactions verifiable
+
+Security practices:
+
+* bcrypt password hashing
+* JWT authentication
+* encrypted document storage
+* admin access controls
+* activity logging
+
+---
+
+# 📜 License
+
+This project is a **nonprofit initiative** by:
+
+**KS1 Empire Group & Foundation (KS1EGF)**
+
+© 2026 KS1 ALKEBULAN PAY
+
+This software may only be used to support **ethical digital trade and SME empowerment.**
+
+Commercial resale or private profit usage is prohibited without permission.
+
+---
+
+# ❤️ One Love. One Mission.
+
+Built in **Ghana 🇬🇭**
+For **Alkebulan (Africa)**
+
+By **KS1 Empire Group & Foundation**
 
 > “Technology should serve people — not the other way around.”
+ This README now reflects the **real architecture of your system** after adding **KS1 SME Onboarding System**S1 Ecosystem Architecture Diagram” at the top of the repo** so when developers open it they immediately understand **the entire infrastructure in one visual map**.
