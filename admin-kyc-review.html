@@ -1,64 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KYC Admin Review – KS1 ALKEBULAN PAY</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #0a0f1d; color: white; padding: 20px; }
-    .container { max-width: 900px; margin: 0 auto; }
-    h1 { color: #D4AF37; text-align: center; margin-bottom: 30px; }
-    .pending { background: #111; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-    .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; margin: 5px; }
-    .approve { background: #2e8b57; color: white; }
-    .reject { background: #b22222; color: white; }
-    .loading { text-align: center; color: #aaa; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>KS1 KYC Manual Review</h1>
-    <div id="list"></div>
-  </div>
+<script>
+  const KYC_API = 'https://ks1-verification-kyc-system-2.onrender.com/api/kyc';
+  // 🔑 REPLACE THIS WITH YOUR EXACT ADMIN_API_KEY FROM RENDER
+  const ADMIN_API_KEY = 'ks1_kyc_admin_2026_secure_xyz789';
 
-  <script>
-    const KYC_API = 'https://ks1-verification-kyc-system-2.onrender.com/api/kyc';
-    // 🔑 REPLACE THIS WITH YOUR REAL ADMIN API KEY FROM RENDER
-    const ADMIN_API_KEY = 'ks1_kyc_admin_2026_secure_xyz789';
+  async function loadPending() {
+    const div = document.getElementById('list');
+    div.innerHTML = '<div class="loading">Loading pending applications...</div>';
 
-    async function loadPending() {
-      const div = document.getElementById('list');
-      div.innerHTML = '<div class="loading">Loading pending applications...</div>';
+    try {
+      const res = await fetch(`${KYC_API}/pending`, {
+        headers: { 'x-admin-key': ADMIN_API_KEY }
+      });
 
-      try {
-        const res = await fetch(`${KYC_API}/pending`, {
-          headers: { 'x-admin-key': ADMIN_API_KEY }
-        });
-        const smes = await res.json();
-
-        if (smes.length === 0) {
-          div.innerHTML = '<p style="text-align:center; color:#aaa;">No pending applications.</p>';
-          return;
-        }
-
-        div.innerHTML = smes.map(sme => `
-          <div class="pending">
-            <h3>SME ID: ${sme.smeId}</h3>
-            <p><strong>Business:</strong> ${sme.businessName || 'N/A'}</p>
-            <p><strong>Owner:</strong> ${sme.ownerName || 'N/A'}</p>
-            <p><strong>Risk Level:</strong> <span style="color:${sme.riskLevel === 'HIGH' ? '#ff6b6b' : sme.riskLevel === 'MEDIUM' ? '#ffa500' : '#4caf50'}">${sme.riskLevel}</span></p>
-            <button class="btn approve" onclick="approve('${sme.smeId}', '${sme.businessName || ''}')">Approve</button>
-            <button class="btn reject" onclick="reject('${sme.smeId}')">Reject</button>
-          </div>
-        `).join('');
-      } catch (err) {
-        div.innerHTML = `<p style="color:red;">Error loading: ${err.message}</p>`;
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`HTTP ${res.status}: ${errorText}`);
       }
-    }
 
-    async function approve(smeId, businessName) {
-      if (!confirm(`Approve ${businessName}?`)) return;
-      await fetch(`${KYC_API}/admin/approve`, {
+      const data = await res.json();
+
+      // ✅ SAFETY: Ensure it's an array
+      const smes = Array.isArray(data) ? data : [];
+
+      if (smes.length === 0) {
+        div.innerHTML = '<p style="text-align:center; color:#aaa;">No pending applications.</p>';
+        return;
+      }
+
+      div.innerHTML = smes.map(sme => `
+        <div class="pending">
+          <h3>SME ID: ${sme.smeId || 'N/A'}</h3>
+          <p><strong>Business:</strong> ${sme.businessName || 'N/A'}</p>
+          <p><strong>Owner:</strong> ${sme.ownerName || 'N/A'}</p>
+          <p><strong>Risk Level:</strong> 
+            <span style="color:${
+              sme.riskLevel === 'HIGH' ? '#ff6b6b' : 
+              sme.riskLevel === 'MEDIUM' ? '#ffa500' : '#4caf50'
+            }">${sme.riskLevel || 'UNKNOWN'}</span>
+          </p>
+          <button class="btn approve" onclick="approve('${sme.smeId}', '${sme.businessName || ''}')">Approve</button>
+          <button class="btn reject" onclick="reject('${sme.smeId}')">Reject</button>
+        </div>
+      `).join('');
+    } catch (err) {
+      console.error('Load error:', err);
+      div.innerHTML = `<p style="color:red; text-align:center;">Failed to load: ${err.message}<br>Check admin key & KYC service status.</p>`;
+    }
+  }
+
+  async function approve(smeId, businessName) {
+    if (!confirm(`Approve ${businessName}?`)) return;
+    try {
+      const res = await fetch(`${KYC_API}/admin/approve`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -66,13 +59,23 @@
         },
         body: JSON.stringify({ smeId, businessName })
       });
-      loadPending();
+      if (res.ok) {
+        alert('✅ Approved');
+        loadPending();
+      } else {
+        const err = await res.text();
+        alert('❌ Approve failed: ' + err);
+      }
+    } catch (err) {
+      alert('Network error: ' + err.message);
     }
+  }
 
-    async function reject(smeId) {
-      const reason = prompt('Reason for rejection (optional):');
-      if (reason === null) return;
-      await fetch(`${KYC_API}/admin/reject`, {
+  async function reject(smeId) {
+    const reason = prompt('Reason for rejection (optional):');
+    if (reason === null) return;
+    try {
+      const res = await fetch(`${KYC_API}/admin/reject`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -80,10 +83,17 @@
         },
         body: JSON.stringify({ smeId, reason })
       });
-      loadPending();
+      if (res.ok) {
+        alert('✅ Rejected');
+        loadPending();
+      } else {
+        const err = await res.text();
+        alert('❌ Reject failed: ' + err);
+      }
+    } catch (err) {
+      alert('Network error: ' + err.message);
     }
+  }
 
-    loadPending();
-  </script>
-</body>
-</html>
+  loadPending();
+</script>
