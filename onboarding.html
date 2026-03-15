@@ -142,7 +142,7 @@
         <button class="btn" onclick="nextStep(1)">Continue</button>
       </div>
 
-      <!-- STEPS 2–4 REMAIN HIDDEN UNTIL NEEDED -->
+      <!-- STEP 2 -->
       <div class="step" id="step2">
         <h2 class="step-title">Step 2: Business Details</h2>
         <input type="text" id="businessName" placeholder="Business Name" required />
@@ -162,6 +162,7 @@
         <button class="btn" onclick="nextStep(2)">Continue</button>
       </div>
 
+      <!-- STEP 3 -->
       <div class="step" id="step3">
         <h2 class="step-title">Step 3: Owner Identity</h2>
         <input type="date" id="ownerBirthday" required />
@@ -179,22 +180,23 @@
         <button class="btn" onclick="nextStep(3)">Continue</button>
       </div>
 
+      <!-- STEP 4 -->
       <div class="step" id="step4">
         <h2 class="step-title">Step 4: Confirm & Submit</h2>
         <p class="step-desc">Review your information before submitting.</p>
         <div id="review"></div>
         <button class="btn" onclick="prevStep(4)">Back</button>
         <button class="btn" onclick="submitOnboarding()" id="submitBtn">Submit Registration</button>
+        <div id="errorMsg" class="error" style="color:#ff6b6b; margin-top:10px; font-size:14px;"></div>
       </div>
     </div>
   </div>
 
   <script>
-    // Keep all your existing JS logic here (createAccount, nextStep, etc.)
-    // ... (same as before) ...
     const API_BASE = 'https://ks1-sme-onboarding-system.onrender.com/api/onboarding';
     let userId = null;
     let smeId = null;
+    let uploadedDocUrl = null;
 
     function showStep(step) {
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
@@ -232,12 +234,11 @@
         return;
       }
 
-      const data = { fullName, phone, wallet, password };
       try {
         const res = await fetch(`${API_BASE}/create-account`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
+          body: JSON.stringify({ fullName, phone, wallet, password })
         });
         const result = await res.json();
         if (result.success) {
@@ -295,6 +296,7 @@
         });
         const result = await res.json();
         if (result.success) {
+          uploadedDocUrl = `/uploads/${file.name}`; // In real app, use result.fileUrl
           showStep(4);
           buildReview();
         } else {
@@ -318,27 +320,47 @@
       `;
     }
 
+    // ✅ UPDATED: Now calls KYC after onboarding submit
     async function submitOnboarding() {
       const btn = document.getElementById('submitBtn');
+      const errorDiv = document.getElementById('errorMsg');
       btn.disabled = true;
       btn.textContent = 'Submitting...';
 
       try {
-        const res = await fetch(`${API_BASE}/submit-onboarding`, {
+        // Step 1: Finalize onboarding in backend
+        const smeRes = await fetch(`${API_BASE}/submit-onboarding`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ smeId })
         });
-        const result = await res.json();
-        if (result.success) {
-          alert('✅ Registration submitted successfully!\n\nYou will receive updates via WhatsApp. You can add your wallet address later in your profile.');
-          window.location.href = 'https://ks1-alkebulan-pay.pages.dev';
+        const smeResult = await smeRes.json();
+        if (!smeResult.success) throw new Error(smeResult.message);
+
+        // Step 2: ✅ SEND TO KYC SYSTEM
+        const kycRes = await fetch('https://ks1-verification-kyc-system-2.onrender.com/api/kyc/start-verification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            smeId: smeId,
+            businessName: document.getElementById('businessName').value,
+            ownerName: document.getElementById('fullName').value,
+            idType: document.getElementById('idType').value,
+            idNumber: document.getElementById('idNumber').value,
+            documentUrls: [uploadedDocUrl || 'https://example.com/fallback.jpg'],
+            city: document.getElementById('city').value
+          })
+        });
+        const kycResult = await kycRes.json();
+
+        if (kycResult.success && kycResult.status === 'KYC_APPROVED') {
+          alert('✅ Your business is verified! You will receive your KS1 Trade ID shortly via WhatsApp.');
         } else {
-          alert('Submission failed: ' + result.message);
+          alert('✅ Registration submitted! Your application is under review. You’ll be notified via WhatsApp.');
         }
+        window.location.href = 'https://ks1-alkebulan-pay.pages.dev';
       } catch (err) {
-        alert('Network error.');
-      } finally {
+        errorDiv.textContent = 'Submission failed: ' + (err.message || 'Unknown error');
         btn.disabled = false;
         btn.textContent = 'Submit Registration';
       }
