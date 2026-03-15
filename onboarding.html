@@ -192,11 +192,12 @@
     </div>
   </div>
 
+  <!-- NO EXTERNAL SCRIPTS -->
   <script>
     const API_BASE = 'https://ks1-sme-onboarding-system.onrender.com/api/onboarding';
     let userId = null;
     let smeId = null;
-    let uploadedDocUrl = null;
+    let uploadedDocUrl = 'https://example.com/fallback-id.jpg';
 
     function showStep(step) {
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
@@ -207,21 +208,13 @@
     }
 
     function nextStep(current) {
-      if (current === 1) {
-        createAccount();
-      } else if (current === 2) {
-        createSMEProfile();
-      } else if (current === 3) {
-        uploadDocument();
-      } else {
-        showStep(4);
-        buildReview();
-      }
+      if (current === 1) createAccount();
+      else if (current === 2) createSMEProfile();
+      else if (current === 3) uploadDocument();
+      else { showStep(4); buildReview(); }
     }
 
-    function prevStep(current) {
-      showStep(current - 1);
-    }
+    function prevStep(current) { showStep(current - 1); }
 
     async function createAccount() {
       const fullName = document.getElementById('fullName').value;
@@ -241,15 +234,9 @@
           body: JSON.stringify({ fullName, phone, wallet, password })
         });
         const result = await res.json();
-        if (result.success) {
-          userId = result.userId;
-          showStep(2);
-        } else {
-          alert('Error: ' + result.message);
-        }
-      } catch (err) {
-        alert('Network error.');
-      }
+        if (result.success) { userId = result.userId; showStep(2); }
+        else alert('Error: ' + result.message);
+      } catch (err) { alert('Network error.'); }
     }
 
     async function createSMEProfile() {
@@ -269,21 +256,14 @@
           body: JSON.stringify(data)
         });
         const result = await res.json();
-        if (result.success) {
-          smeId = result.smeId;
-          showStep(3);
-        } else {
-          alert('Error: ' + result.message);
-        }
-      } catch (err) {
-        alert('Error creating profile.');
-      }
+        if (result.success) { smeId = result.smeId; showStep(3); }
+        else alert('Error: ' + result.message);
+      } catch (err) { alert('Error creating profile.'); }
     }
 
     async function uploadDocument() {
       const file = document.getElementById('idDocument').files[0];
       if (!file) return alert('Please select an ID document.');
-
       const formData = new FormData();
       formData.append('document', file);
       formData.append('smeId', smeId);
@@ -295,22 +275,14 @@
           body: formData
         });
         const result = await res.json();
-        if (result.success) {
-          // In real app, use actual URL from backend
-          uploadedDocUrl = 'https://example.com/uploaded-id.jpg';
-          showStep(4);
-          buildReview();
-        } else {
-          alert('Upload failed: ' + result.message);
-        }
-      } catch (err) {
-        alert('Upload error.');
-      }
+        if (result.success) { showStep(4); buildReview(); }
+        else alert('Upload failed: ' + result.message);
+      } catch (err) { alert('Upload error.'); }
     }
 
     function buildReview() {
       const contact = document.getElementById('phone').value;
-      const wallet = document.getElementById('wallet').value || 'Not provided (can add later)';
+      const wallet = document.getElementById('wallet').value || 'Not provided';
       document.getElementById('review').innerHTML = `
         <p><strong>Owner:</strong> ${document.getElementById('fullName').value}</p>
         <p><strong>WhatsApp:</strong> ${contact}</p>
@@ -328,21 +300,17 @@
       btn.textContent = 'Submitting...';
 
       try {
-        // Finalize onboarding
-        const smeRes = await fetch(`${API_BASE}/submit-onboarding`, {
+        await fetch(`${API_BASE}/submit-onboarding`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ smeId })
         });
-        const smeResult = await smeRes.json();
-        if (!smeResult.success) throw new Error(smeResult.message);
 
-        // ✅ SEND TO KYC SYSTEM
         const kycRes = await fetch('https://ks1-verification-kyc-system-2.onrender.com/api/kyc/start-verification', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            smeId: smeId,
+            smeId,
             businessName: document.getElementById('businessName').value,
             ownerName: document.getElementById('fullName').value,
             idType: document.getElementById('idType').value,
@@ -354,9 +322,9 @@
         const kycResult = await kycRes.json();
 
         if (kycResult.success && kycResult.status === 'KYC_APPROVED') {
-          alert('✅ Your business is verified! You will receive your KS1 Trade ID shortly via WhatsApp.');
+          alert('✅ Verified! You’ll get your Trade ID via WhatsApp.');
         } else {
-          alert('✅ Registration submitted! Your application is under review. You’ll be notified via WhatsApp.');
+          alert('✅ Submitted! Under review. WhatsApp update soon.');
         }
         window.location.href = 'https://ks1-alkebulan-pay.pages.dev';
       } catch (err) {
