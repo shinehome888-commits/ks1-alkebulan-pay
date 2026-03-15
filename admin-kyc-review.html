@@ -3,13 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KYC Admin Review – KS1 ALKEBULAN PAY</title>
+  <title>KS1 KYC Admin Review</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #0a0f1d; color: white; padding: 20px; }
-    .container { max-width: 900px; margin: 0 auto; }
-    h1 { color: #D4AF37; text-align: center; margin-bottom: 30px; }
-    .pending { background: #111; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-    .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; margin: 5px; }
+    body {
+      background: #0a0f1d;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #D4AF37;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .pending {
+      background: #111;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+    }
     .approve { background: #2e8b57; color: white; }
     .reject { background: #b22222; color: white; }
     .loading { text-align: center; color: #aaa; }
@@ -18,31 +42,25 @@
 <body>
   <div class="container">
     <h1>KS1 KYC Manual Review</h1>
-    <div id="list"></div>
+    <div id="list">Loading pending applications...</div>
   </div>
 
-  <!-- NO EXTERNAL SCRIPTS — ALL LOGIC INLINE -->
   <script>
-    const KYC_API = 'https://ks1-verification-kyc-system-2.onrender.com/api/kyc';
-    // 🔑 REPLACE WITH YOUR REAL ADMIN KEY FROM RENDER
+    // 🔑 REPLACE THIS WITH YOUR REAL ADMIN KEY FROM RENDER
     const ADMIN_API_KEY = 'ks1_kyc_admin_2026_secure_xyz789';
+    const KYC_API = 'https://ks1-verification-kyc-system-2.onrender.com/api/kyc';
 
     async function loadPending() {
       const div = document.getElementById('list');
-      if (!div) return;
-      div.innerHTML = '<div class="loading">Loading pending applications...</div>';
-
       try {
         const res = await fetch(`${KYC_API}/pending`, {
           headers: { 'x-admin-key': ADMIN_API_KEY }
         });
 
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (!res.ok) throw new Error('Failed to fetch');
 
-        const data = await res.json();
-        const smes = Array.isArray(data) ? data : [];
-
-        if (smes.length === 0) {
+        const smes = await res.json();
+        if (!Array.isArray(smes) || smes.length === 0) {
           div.innerHTML = '<p style="text-align:center; color:#aaa;">No pending applications.</p>';
           return;
         }
@@ -53,57 +71,66 @@
             <p><strong>Business:</strong> ${sme.businessName || 'N/A'}</p>
             <p><strong>Owner:</strong> ${sme.ownerName || 'N/A'}</p>
             <p><strong>Risk Level:</strong> 
-              <span style="color:${
-                sme.riskLevel === 'HIGH' ? '#ff6b6b' : 
-                sme.riskLevel === 'MEDIUM' ? '#ffa500' : '#4caf50'
-              }">${sme.riskLevel || 'UNKNOWN'}</span>
+              <span style="color:${sme.riskLevel === 'HIGH' ? '#ff6b6b' : sme.riskLevel === 'MEDIUM' ? '#ffa500' : '#4caf50'}">
+                ${sme.riskLevel || 'UNKNOWN'}
+              </span>
             </p>
             <button class="btn approve" onclick="approve('${sme.smeId}', '${(sme.businessName || '').replace(/'/g, "\\'")}')">Approve</button>
             <button class="btn reject" onclick="reject('${sme.smeId}')">Reject</button>
           </div>
         `).join('');
       } catch (err) {
-        console.error('Load error:', err);
-        const div = document.getElementById('list');
-        if (div) {
-          div.innerHTML = `<p style="color:red; text-align:center;">Failed to load: ${err.message}<br>Check admin key & KYC service.</p>`;
-        }
+        div.innerHTML = `<p style="color:red; text-align:center;">Error: ${err.message}<br>Check admin key & KYC service status.</p>`;
+        console.error('Admin review error:', err);
       }
     }
 
     async function approve(smeId, businessName) {
-      if (!confirm(`Approve ${businessName}?`)) return;
+      if (!confirm(`Approve "${businessName}"?`)) return;
       try {
         const res = await fetch(`${KYC_API}/admin/approve`, {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'x-admin-key': ADMIN_API_KEY
           },
           body: JSON.stringify({ smeId, businessName })
         });
-        if (res.ok) { alert('✅ Approved'); loadPending(); }
-        else alert('❌ Approve failed');
-      } catch (err) { alert('Network error'); }
+        if (res.ok) {
+          alert('✅ Approved');
+          loadPending();
+        } else {
+          alert('❌ Approval failed');
+        }
+      } catch (err) {
+        alert('Network error');
+      }
     }
 
     async function reject(smeId) {
-      const reason = prompt('Reason for rejection (optional):');
+      const reason = prompt('Reason for rejection:');
       if (reason === null) return;
       try {
         const res = await fetch(`${KYC_API}/admin/reject`, {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'x-admin-key': ADMIN_API_KEY
           },
           body: JSON.stringify({ smeId, reason })
         });
-        if (res.ok) { alert('✅ Rejected'); loadPending(); }
-        else alert('❌ Reject failed');
-      } catch (err) { alert('Network error'); }
+        if (res.ok) {
+          alert('✅ Rejected');
+          loadPending();
+        } else {
+          alert('❌ Rejection failed');
+        }
+      } catch (err) {
+        alert('Network error');
+      }
     }
 
+    // Load on page load
     loadPending();
   </script>
 </body>
