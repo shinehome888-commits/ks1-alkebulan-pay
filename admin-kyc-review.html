@@ -21,9 +21,10 @@
     <div id="list"></div>
   </div>
 
+  <!-- NO EXTERNAL SCRIPTS — ALL LOGIC INLINE -->
   <script>
     const KYC_API = 'https://ks1-verification-kyc-system-2.onrender.com/api/kyc';
-    // 🔑 REPLACE THIS WITH YOUR REAL ADMIN KEY FROM RENDER
+    // 🔑 REPLACE WITH YOUR REAL ADMIN KEY FROM RENDER
     const ADMIN_API_KEY = 'ks1_kyc_admin_2026_secure_xyz789';
 
     async function loadPending() {
@@ -36,9 +37,7 @@
           headers: { 'x-admin-key': ADMIN_API_KEY }
         });
 
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const data = await res.json();
         const smes = Array.isArray(data) ? data : [];
