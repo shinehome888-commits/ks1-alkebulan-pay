@@ -296,7 +296,8 @@
         });
         const result = await res.json();
         if (result.success) {
-          uploadedDocUrl = `/uploads/${file.name}`; // In real app, use result.fileUrl
+          // In real app, use actual URL from backend
+          uploadedDocUrl = 'https://example.com/uploaded-id.jpg';
           showStep(4);
           buildReview();
         } else {
@@ -320,7 +321,6 @@
       `;
     }
 
-    // ✅ UPDATED: Now calls KYC after onboarding submit
     async function submitOnboarding() {
       const btn = document.getElementById('submitBtn');
       const errorDiv = document.getElementById('errorMsg');
@@ -328,7 +328,7 @@
       btn.textContent = 'Submitting...';
 
       try {
-        // Step 1: Finalize onboarding in backend
+        // Finalize onboarding
         const smeRes = await fetch(`${API_BASE}/submit-onboarding`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -337,7 +337,7 @@
         const smeResult = await smeRes.json();
         if (!smeResult.success) throw new Error(smeResult.message);
 
-        // Step 2: ✅ SEND TO KYC SYSTEM
+        // ✅ SEND TO KYC SYSTEM
         const kycRes = await fetch('https://ks1-verification-kyc-system-2.onrender.com/api/kyc/start-verification', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -347,7 +347,7 @@
             ownerName: document.getElementById('fullName').value,
             idType: document.getElementById('idType').value,
             idNumber: document.getElementById('idNumber').value,
-            documentUrls: [uploadedDocUrl || 'https://example.com/fallback.jpg'],
+            documentUrls: [uploadedDocUrl],
             city: document.getElementById('city').value
           })
         });
