@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register – KS1 ALKEBULAN PAY</title>
+  <style>
+    body { font-family: sans-serif; background: #f0f9ff; padding: 20px; }
+    .form { max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+    input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; }
+    button { background: #1e3a8a; color: white; padding: 12px; border: none; border-radius: 4px; width: 100%; cursor: pointer; }
+    .error { color: red; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <div class="form">
+    <h2>Register Your Business</h2>
+    <div id="error" class="error"></div>
+    <form id="registerForm">
+      <input type="text" id="fullName" placeholder="Full Name" required />
+      <input type="tel" id="phone" placeholder="WhatsApp Phone (+233...)" required />
+      <input type="text" id="wallet" placeholder="Wallet Address (optional)" />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Register</button>
+    </form>
+    <p style="margin-top: 15px;">
+      Already have an account? <a href="login.html">Login here</a>
+    </p>
+  </div>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const fullName = document.getElementById('fullName').value;
+      const phone = document.getElementById('phone').value;
+      const wallet = document.getElementById('wallet').value;
+      const password = document.getElementById('password').value;
+
+      // Step 1: Create Account
+      try {
+        let res = await fetch('https://ks1-sme-onboarding-system.onrender.com/api/onboarding/create-account', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fullName, phone, wallet, password })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.message || 'Failed to create account');
+        }
+
+        const data1 = await res.json();
+
+        // Step 2: Create SME Profile
+        res = await fetch('https://ks1-sme-onboarding-system.onrender.com/api/onboarding/create-sme-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: data1.userId,
+            businessName: `${fullName} Business`,
+            businessType: 'Entrepreneur',
+            industry: 'General',
+            country: 'Ghana',
+            city: 'Accra',
+            address: 'Not specified'
+          })
+        });
+
+        if (!res.ok) throw new Error('Failed to create business profile');
+        const data2 = await res.json();
+
+        // Step 3: Submit Onboarding
+        await fetch('https://ks1-sme-onboarding-system.onrender.com/api/onboarding/submit-onboarding', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ smeId: data2.smeId })
+        });
+
+        alert('✅ Registration successful! Your application is under review.');
+        window.location.href = 'login.html';
+      } catch (err) {
+        document.getElementById('error').textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>
